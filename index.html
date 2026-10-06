@@ -3,7 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+
+    <style>
+        #games {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        #games a {
+            display: block;
+            width: 500px;
+            height: 500px;
+        }
+
+        #games img {
+            width: 500px;
+            height: 500px;
+            object-fit: contain;
+            display: block;
+            border: 3px solid transparent;
+            box-sizing: border-box;
+        }
+
+        #games img:hover {
+            border-color: yellow;
+            box-shadow: 0 0 20px yellow;
+        }
+    </style>
 </head>
 
 <body>
@@ -25,18 +52,6 @@
 
             const files = await response.json();
 
-            const htmlFiles = files
-                .filter(file =>
-                    file.type === "file" &&
-                    file.name.toLowerCase().endsWith(".html") &&
-                    file.name.toLowerCase() !== "index.html"
-                )
-                .sort((a, b) =>
-                    a.name.localeCompare(b.name, undefined, {
-                        numeric: true
-                    })
-                );
-
             const pngFiles = new Set(
                 files
                     .filter(file =>
@@ -46,12 +61,21 @@
                     .map(file => file.name.toLowerCase())
             );
 
-            htmlFiles.forEach(file => {
-                const filename = file.name;
+            const htmlFiles = files
+                .filter(file =>
+                    file.type === "file" &&
+                    file.name.toLowerCase().endsWith(".html") &&
+                    file.name.toLowerCase() !== "index.html" &&
+                    file.name.toLowerCase() !== "launch.html"
+                )
+                .sort((a, b) =>
+                    a.name.localeCompare(b.name, undefined, {
+                        numeric: true
+                    })
+                );
 
-                // Get the number before the dash.
-                // Example: 112-fix2.html -> 112
-                const match = filename.match(/^(\d+)-/);
+            htmlFiles.forEach(file => {
+                const match = file.name.match(/^(\d+)-/);
 
                 if (!match) {
                     return;
@@ -65,18 +89,20 @@
                 }
 
                 const link = document.createElement("a");
-                link.href = file.name;
+
+                link.href = "launch.html?game=" + encodeURIComponent(file.name);
 
                 const image = document.createElement("img");
                 image.src = imageName;
                 image.alt = number;
+                image.loading = "lazy";
 
                 link.appendChild(image);
                 games.appendChild(link);
             });
 
         } catch (error) {
-            console.error(error);
+            console.error("Could not load games:", error);
         }
     }
 
