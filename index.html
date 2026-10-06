@@ -3,118 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gee Enn Math Mirror</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-        }
-
-        header {
-            padding: 30px 20px;
-            text-align: center;
-            background: #1b1b1b;
-            border-bottom: 2px solid #333;
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            font-size: 32px;
-        }
-
-        header p {
-            margin: 0;
-            color: #aaa;
-        }
-
-        #games {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
-
-        .game {
-            display: block;
-            background: #222;
-            border: 1px solid #333;
-            border-radius: 10px;
-            overflow: hidden;
-            color: white;
-            text-decoration: none;
-            transition: 0.15s;
-        }
-
-        .game:hover {
-            background: #2b2b2b;
-            border-color: #666;
-            transform: translateY(-3px);
-        }
-
-        .thumbnail {
-            width: 100%;
-            height: 130px;
-            object-fit: cover;
-            display: block;
-            background: #181818;
-        }
-
-        .no-image {
-            width: 100%;
-            height: 130px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #181818;
-            color: #555;
-            font-size: 40px;
-        }
-
-        .info {
-            padding: 14px;
-        }
-
-        .name {
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: capitalize;
-        }
-
-        .filename {
-            margin-top: 5px;
-            font-size: 12px;
-            color: #888;
-            word-break: break-word;
-        }
-
-        .error {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 30px;
-            color: #f66;
-        }
-    </style>
+    <title>Dashboard</title>
 </head>
 
 <body>
 
-<header>
-    <h1>Gee Enn Math Mirror</h1>
-    <p>All the games in one place</p>
-</header>
-
-<div id="games">
-    <p>Loading games...</p>
-</div>
+<div id="games"></div>
 
 <script>
     const games = document.getElementById("games");
@@ -152,71 +46,37 @@
                     .map(file => file.name.toLowerCase())
             );
 
-            games.innerHTML = "";
-
             htmlFiles.forEach(file => {
-                const link = document.createElement("a");
-                link.className = "game";
-                link.href = file.name;
-
                 const filename = file.name;
 
-                /*
-                    Find numbers followed by a dash.
-
-                    Examples:
-                    10-f.html       -> 10
-                    112-fix2.html   -> 112
-                    117-fixf.html   -> 117
-                    196-fixedf.html -> 196
-                */
+                // Get the number before the dash.
+                // Example: 112-fix2.html -> 112
                 const match = filename.match(/^(\d+)-/);
 
-                let imageHTML = '<div class="no-image">?</div>';
-
-                if (match) {
-                    const number = match[1];
-                    const imageName = number + ".png";
-
-                    if (pngFiles.has(imageName.toLowerCase())) {
-                        imageHTML = `
-                            <img
-                                class="thumbnail"
-                                src="${imageName}"
-                                alt="${number}"
-                            >
-                        `;
-                    }
+                if (!match) {
+                    return;
                 }
 
-                const displayName = filename
-                    .replace(/\.html$/i, "")
-                    .replace(/-/g, " ");
+                const number = match[1];
+                const imageName = number + ".png";
 
-                link.innerHTML = `
-                    ${imageHTML}
-                    <div class="info">
-                        <div class="name">${displayName}</div>
-                        <div class="filename">${filename}</div>
-                    </div>
-                `;
+                if (!pngFiles.has(imageName.toLowerCase())) {
+                    return;
+                }
 
+                const link = document.createElement("a");
+                link.href = file.name;
+
+                const image = document.createElement("img");
+                image.src = imageName;
+                image.alt = number;
+
+                link.appendChild(image);
                 games.appendChild(link);
             });
 
-            if (htmlFiles.length === 0) {
-                games.innerHTML =
-                    '<div class="error">No HTML games found.</div>';
-            }
-
         } catch (error) {
             console.error(error);
-
-            games.innerHTML = `
-                <div class="error">
-                    Could not load the games.
-                </div>
-            `;
         }
     }
 
