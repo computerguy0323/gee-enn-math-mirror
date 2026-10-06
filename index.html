@@ -1,3 +1,160 @@
-<html>
-    <h1>Gee-Enn-Math-Mirror</h1><p>by computerguy</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gee Enn Math Mirror</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+        }
+
+        header {
+            padding: 30px 20px;
+            text-align: center;
+            background: #1b1b1b;
+            border-bottom: 2px solid #333;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        p {
+            margin: 0;
+            color: #aaa;
+        }
+
+        #games {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        a {
+            display: block;
+            padding: 16px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: 0.15s;
+            word-break: break-word;
+        }
+
+        a:hover {
+            background: #333;
+            border-color: #666;
+            transform: translateY(-2px);
+        }
+
+        .number {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .filename {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .error {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px;
+            color: #f66;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Gee Enn Math Mirror</h1>
+    <p>All the games in one place</p>
+</header>
+
+<div id="games">
+    <p>Loading games...</p>
+</div>
+
+<script>
+    const games = document.getElementById("games");
+
+    async function loadGames() {
+        try {
+            const response = await fetch(
+                "https://api.github.com/repos/computerguy0323/gee-enn-math-mirror/contents"
+            );
+
+            if (!response.ok) {
+                throw new Error("GitHub API error");
+            }
+
+            const files = await response.json();
+
+            const htmlFiles = files
+                .filter(file =>
+                    file.type === "file" &&
+                    file.name.toLowerCase().endsWith(".html") &&
+                    file.name.toLowerCase() !== "index.html"
+                )
+                .sort((a, b) =>
+                    a.name.localeCompare(b.name, undefined, {
+                        numeric: true
+                    })
+                );
+
+            games.innerHTML = "";
+
+            htmlFiles.forEach(file => {
+                const link = document.createElement("a");
+
+                link.href = file.name;
+
+                const name = file.name
+                    .replace(".html", "")
+                    .replace(/-/g, " ");
+
+                link.innerHTML = `
+                    <div class="number">${name}</div>
+                    <div class="filename">${file.name}</div>
+                `;
+
+                games.appendChild(link);
+            });
+
+            if (htmlFiles.length === 0) {
+                games.innerHTML =
+                    '<div class="error">No HTML games found.</div>';
+            }
+
+        } catch (error) {
+            games.innerHTML = `
+                <div class="error">
+                    Could not load the games.<br>
+                    Make sure this page is being hosted through GitHub Pages.
+                </div>
+            `;
+        }
+    }
+
+    loadGames();
+</script>
+
+</body>
 </html>
