@@ -8,6 +8,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
+        .rainbow-text {
+  /* Define the rainbow gradient colors */
+  background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  
+  /* Clip the background to the text text boundaries */
+  -webkit-background-clip: text;
+  background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            display: inline-block; 
+            font-size: 48px;
+            font-family: sans-serif;
+        }
+
         #games {
             display: flex;
             flex-wrap: wrap;
