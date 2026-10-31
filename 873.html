@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Reset margins and eliminate window scrollbars */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a191b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Span the iframe completely across the viewport dimensions */
+        .fullscreen-iframe {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            display: block;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Isolated Context Container targeting Nexus Sandbox -->
+    <iframe 
+        id="nexusFrame"
+        src="https://car-meow.github.io/toothbrush/" 
+        class="fullscreen-iframe"
+        allow="fullscreen; autoplay; gamepad; clipboard-write; clipboard-read">
+    </iframe>
+</body>
+</html>
